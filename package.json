@@ -1,9 +1,9 @@
 {
-  "name": "@openmrs/esm-template-app",
+  "name": "@openmrs/esm-cohort-builder-app",
   "version": "3.0.0",
   "license": "MPL-2.0",
   "description": "A microfrontend template OpenMRS",
-  "browser": "dist/openmrs-esm-template-app.js",
+  "browser": "dist/openmrs-esm-cohort-builder-app.js",
   "main": "src/index.ts",
   "source": true,
   "scripts": {
