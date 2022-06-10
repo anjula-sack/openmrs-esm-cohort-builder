@@ -7,17 +7,7 @@
 import React, { useState } from "react";
 import { Trans } from "react-i18next";
 import Button from "carbon-components-react/es/components/Button";
-import { TabPanel } from "carbon-components-react/es/components/Tab";
 import { Tile } from "carbon-components-react/es/components/Tile";
-import {
-  DataTable,
-  Table,
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableBody,
-  TableCell,
-} from "carbon-components-react";
 import { getPatient } from "./patient-getter.resource";
 
 const rows = [
@@ -61,30 +51,6 @@ export function PatientGetter() {
           ? `${patient.name[0].given} ${patient.name[0].family} / ${patient.gender} / ${patient.birthDate}`
           : null}
       </Tile>
-      <DataTable rows={rows} headers={headers}>
-        {({ rows, headers, getTableProps, getHeaderProps, getRowProps }) => (
-          <Table {...getTableProps()}>
-            <TableHead>
-              <TableRow>
-                {headers.map((header) => (
-                  <TableHeader {...getHeaderProps({ header })}>
-                    {header.header}
-                  </TableHeader>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row) => (
-                <TableRow {...getRowProps({ row })}>
-                  {row.cells.map((cell) => (
-                    <TableCell key={cell.id}>{cell.value}</TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </DataTable>
     </div>
   );
 }

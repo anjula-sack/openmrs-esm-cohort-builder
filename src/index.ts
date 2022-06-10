@@ -1,10 +1,5 @@
 import { getAsyncLifecycle } from "@openmrs/esm-framework";
 
-/**
- * This tells the app shell how to obtain translation files: that they
- * are JSON files in the directory `../translations` (which you should
- * see in the directory structure).
- */
 const importTranslation = require.context(
   "../translations",
   false,
@@ -32,33 +27,7 @@ function setupOpenMRS() {
         route: "cohort-builder",
       },
     ],
-    extensions: [
-      {
-        id: "Red box",
-        load: getAsyncLifecycle(
-          () => import("./boxes/extensions/red-box"),
-          options
-        ),
-        slot: "Boxes",
-      },
-      {
-        id: "Blue box",
-        load: getAsyncLifecycle(
-          () => import("./boxes/extensions/blue-box"),
-          options
-        ),
-        slot: "Boxes",
-        // same as `slots: ["Boxes"],`
-      },
-      {
-        id: "Brand box",
-        load: getAsyncLifecycle(
-          () => import("./boxes/extensions/brand-box"),
-          options
-        ),
-        slot: "Boxes",
-      },
-    ],
+    extensions: [],
   };
 }
 
