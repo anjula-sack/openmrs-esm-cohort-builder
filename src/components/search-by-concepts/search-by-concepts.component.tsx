@@ -4,7 +4,6 @@ import {
   Button,
   DatePicker,
   DatePickerInput,
-  Grid,
   Column,
   Dropdown,
   Search,
@@ -12,9 +11,9 @@ import {
   NumberInput,
 } from "carbon-components-react";
 import { getConcepts, search } from "./search-by-concepts.resource";
-import "./search-by-concepts.css";
 import { JSONHelper } from "./jsonHelper";
 import { queryDescriptionBuilder } from "./helpers";
+import styles from "./search-by-concepts.style.css";
 
 interface Concept {
   uuid: string;
@@ -25,6 +24,19 @@ interface Concept {
   description: string;
   datatype: any;
 }
+
+const observationOptions = [
+  {
+    id: "option-0",
+    label: "Patients who have these observations",
+    value: "ANY",
+  },
+  {
+    id: "option-1",
+    label: "Patients who do not have these observations",
+    value: "NO",
+  },
+];
 
 export const SearchByConcepts: React.FC = () => {
   const [searchResults, setSearchResults] = useState<Concept[]>([]);
@@ -37,7 +49,6 @@ export const SearchByConcepts: React.FC = () => {
     modifier: "",
     onOrBefore: "",
     onOrAfter: "",
-    formToRender: "",
   });
   const jsonHelper = new JSONHelper();
 
@@ -48,6 +59,8 @@ export const SearchByConcepts: React.FC = () => {
       setIsLoading(false);
     });
   };
+
+  const handleDates = (dates: Date[]) => {};
 
   const handleSubmit = () => {
     const types = {
@@ -62,6 +75,7 @@ export const SearchByConcepts: React.FC = () => {
     const { hl7Abbrev, name } = concept;
     const dataType = types[hl7Abbrev];
     const params = { [dataType]: [] };
+
     Object.keys(observations).forEach((key) => {
       observations[key] !== ""
         ? params[dataType].push({
@@ -83,34 +97,24 @@ export const SearchByConcepts: React.FC = () => {
 
     const description = queryDescriptionBuilder(observations, name);
     search(searchData, description);
-
-    // this.handleReset();
   };
 
   return (
     <div>
-      Search By Concepts
-      <Grid>
-        <Column>
+      <h5>Search By Concepts</h5>
+      <div>
+        <Column className={styles.column}>
           <Search
             closeButtonLabelText="Clear search"
             id="concept-search"
             labelText="Search Concepts"
+            placeholder="Search Concepts"
             onChange={(e) => onSearch(e.target.value)}
             onKeyDown={function noRefCheck() {}}
             onClear={() => setSearchResults([])}
             size="lg"
           />
-          <div
-            style={{
-              maxHeight: 400,
-              overflow: "scroll",
-              position: "absolute",
-              zIndex: 2,
-              width: "85%",
-              background: "#f0eeee",
-            }}
-          >
+          <div className={styles.search}>
             {isLoading ? (
               <CodeSnippetSkeleton type="multi" />
             ) : (
@@ -134,9 +138,8 @@ export const SearchByConcepts: React.FC = () => {
             <h5>Patients with observations whose answer is {concept.name}</h5>
           )}
         </Column>
-        <Column sm={2} md={{ span: 2, offset: 1 }}>
+        <Column className={styles.column} sm={2} md={{ span: 4 }}>
           <Dropdown
-            helperText="This is some helper text"
             id="timeModifier"
             onChange={(data) =>
               setObservations({
@@ -144,68 +147,64 @@ export const SearchByConcepts: React.FC = () => {
                 timeModifier: data.selectedItem.value,
               })
             }
-            items={[
-              {
-                id: "option-0",
-                text: "Patients who have these observations",
-                value: "ANY",
-              },
-              {
-                id: "option-1",
-                text: "Patients who do not have these observations",
-                value: "NO",
-              },
-            ]}
+            initialSelectedItem={observationOptions[0]}
+            items={observationOptions}
             label=""
             titleText=""
           />
         </Column>
-        <NumberInput
-          helperText="Optional helper text."
-          id="carbon-number"
-          invalidText="Number is not valid"
-          label="NumberInput label"
-          max={100}
-          min={0}
-          size="md"
-          value={50}
-        />
-        <NumberInput
-          helperText="Optional helper text."
-          id="carbon-number"
-          invalidText="Number is not valid"
-          label="NumberInput label"
-          max={100}
-          min={0}
-          size="md"
-          value={50}
-        />
-        <Column>Date Range :</Column>
-        <Column sm={2} md={{ span: 4, offset: 1 }}>
-          <DatePicker datePickerType="range">
+        <Column className={styles.column}>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            Within the last
+            <NumberInput
+              id="carbon-number"
+              invalidText="Number is not valid"
+              min={0}
+              size="md"
+              value={0}
+            />
+            months
+            <NumberInput
+              id="carbon-number"
+              invalidText="Number is not valid"
+              min={0}
+              size="md"
+              value={0}
+            />
+            and/or days
+          </div>
+        </Column>
+        <Column className={styles.column}>
+          <p className={styles.dateRange}>Date Range :</p>
+          <DatePicker
+            datePickerType="range"
+            dateFormat="d-m-Y"
+            allowInput={false}
+            onChange={(dates: Date[]) => handleDates(dates)}
+          >
             <DatePickerInput
               id="date-picker-input-id-start"
               labelText="Start date"
-              placeholder="mm/dd/yyyy"
+              placeholder="DD-MM-YYYY"
               size="md"
             />
             <DatePickerInput
               id="date-picker-input-id-finish"
               labelText="End date"
-              placeholder="mm/dd/yyyy"
+              placeholder="DD-MM-YYYY"
               size="md"
             />
           </DatePicker>
         </Column>
-        <Column sm={2} md={{ span: 4, offset: 6 }}>
-          <ButtonSet>
+        <Column sm={2} md={{ span: 4, offset: 4 }} className={styles.column}>
+          <ButtonSet className={styles.buttonSet}>
             <Button kind="primary" onClick={handleSubmit}>
               Search
             </Button>
             <Button kind="secondary">Reset</Button>
           </ButtonSet>
         </Column>
-      </Grid>
+      </div>
     </div>
   );
 };

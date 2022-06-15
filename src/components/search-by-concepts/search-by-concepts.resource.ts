@@ -44,6 +44,7 @@ const addToHistory = (description, patients, parameters) => {
 export const search = (queryDetails, description = "") => {
   openmrsFetch("/ws/rest/v1/reportingrest/adhocquery?v=full", {
     method: "POST",
+    headers: { "Content-Type": "application/json; charset=utf-8" },
     body: queryDetails.query,
   }).then((response) => {
     response

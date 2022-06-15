@@ -1761,6 +1761,13 @@
     uuid "^8.3.2"
     workbox-window "^6.1.5"
 
+"@openmrs/esm-patient-common-lib@^3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@openmrs/esm-patient-common-lib/-/esm-patient-common-lib-3.1.0.tgz#eb9ee915dff3b10e549247f53c83a9c52ae509c8"
+  integrity sha512-A52dVekPaVCRCBG6EkJx5Qj82PRHXKHXq0u7qVSIPBMY0hh80eSquGSooMxWq5emSjV5t2aC1eqExjvfQocFsQ==
+  dependencies:
+    lodash-es "^4.17.15"
+
 "@openmrs/esm-react-utils@^3.3.2-pre.1211":
   version "3.3.2-pre.1211"
   resolved "https://registry.npmjs.org/@openmrs/esm-react-utils/-/esm-react-utils-3.3.2-pre.1211.tgz"
