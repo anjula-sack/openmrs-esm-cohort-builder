@@ -14,6 +14,7 @@ import { getConcepts, search } from "./search-by-concepts.resource";
 import { JSONHelper } from "./jsonHelper";
 import { queryDescriptionBuilder } from "./helpers";
 import styles from "./search-by-concepts.style.css";
+import moment from "moment";
 
 interface Concept {
   uuid: string;
@@ -42,6 +43,7 @@ export const SearchByConcepts: React.FC = () => {
   const [searchResults, setSearchResults] = useState<Concept[]>([]);
   const [concept, setConcept] = useState<Concept>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSearchResultsEmpty, setIsSearchResultsEmpty] = useState(false);
   const [observations, setObservations] = useState({
     timeModifier: "ANY",
     question: concept?.uuid,
@@ -53,14 +55,31 @@ export const SearchByConcepts: React.FC = () => {
   const jsonHelper = new JSONHelper();
 
   const onSearch = (search: string) => {
-    setIsLoading(true);
-    getConcepts(search).then((results) => {
-      setSearchResults(results);
-      setIsLoading(false);
+    if (search.length > 2) {
+      setConcept(null);
+      setSearchResults([]);
+      setIsLoading(true);
+      getConcepts(search).then((results: Concept[]) => {
+        results.length
+          ? setSearchResults(results)
+          : setIsSearchResultsEmpty(true);
+        setIsLoading(false);
+      });
+    }
+  };
+
+  const handleDates = (dates: Date[]) => {
+    setObservations({
+      ...observations,
+      onOrBefore: moment(dates[0]).format("DD-MM-YYYY"),
+      onOrAfter: moment(dates[1]).format("DD-MM-YYYY"),
     });
   };
 
-  const handleDates = (dates: Date[]) => {};
+  const onSearchClear = () => {
+    setIsSearchResultsEmpty(false);
+    setSearchResults([]);
+  };
 
   const handleSubmit = () => {
     const types = {
@@ -110,8 +129,7 @@ export const SearchByConcepts: React.FC = () => {
             labelText="Search Concepts"
             placeholder="Search Concepts"
             onChange={(e) => onSearch(e.target.value)}
-            onKeyDown={function noRefCheck() {}}
-            onClear={() => setSearchResults([])}
+            onClear={onSearchClear}
             size="lg"
           />
           <div className={styles.search}>
@@ -135,7 +153,13 @@ export const SearchByConcepts: React.FC = () => {
             )}
           </div>
           {concept && (
-            <h5>Patients with observations whose answer is {concept.name}</h5>
+            <p className={styles.text}>
+              Patients with observations whose answer is{" "}
+              <span style={{ fontWeight: "bold" }}>{concept.name}</span>
+            </p>
+          )}
+          {isSearchResultsEmpty && (
+            <p className={styles.text}>There are no search items</p>
           )}
         </Column>
         <Column className={styles.column} sm={2} md={{ span: 4 }}>
@@ -150,28 +174,31 @@ export const SearchByConcepts: React.FC = () => {
             initialSelectedItem={observationOptions[0]}
             items={observationOptions}
             label=""
-            titleText=""
           />
         </Column>
         <Column className={styles.column}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            Within the last
-            <NumberInput
-              id="carbon-number"
-              invalidText="Number is not valid"
-              min={0}
-              size="md"
-              value={0}
-            />
-            months
-            <NumberInput
-              id="carbon-number"
-              invalidText="Number is not valid"
-              min={0}
-              size="md"
-              value={0}
-            />
-            and/or days
+          <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <p style={{ paddingRight: 20 }}>Within the last </p>
+              <NumberInput
+                id="last-months"
+                invalidText="Number is not valid"
+                min={0}
+                size="sm"
+                value={0}
+              />
+              <p style={{ paddingRight: 20, paddingLeft: 20 }}>months</p>
+            </div>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <NumberInput
+                id="last-days"
+                invalidText="Number is not valid"
+                min={0}
+                size="sm"
+                value={0}
+              />
+              <p style={{ paddingRight: 20, paddingLeft: 20 }}>and/or days</p>
+            </div>
           </div>
         </Column>
         <Column className={styles.column}>
